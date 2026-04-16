@@ -1,0 +1,100 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - heading "Cotton C端低代码平台" [level=1] [ref=e6]
+      - generic [ref=e8]: 新页面
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - button "撤销 (Ctrl+Z)" [disabled] [ref=e11]:
+          - img [ref=e12]
+        - button "重做 (Ctrl+Y)" [disabled] [ref=e14]:
+          - img [ref=e15]
+      - button "保存" [ref=e17] [cursor=pointer]
+      - button "全屏预览" [ref=e18] [cursor=pointer]
+      - button "导出" [ref=e19] [cursor=pointer]
+  - generic [ref=e20]:
+    - generic [ref=e21]:
+      - generic [ref=e22]: "设备类型:"
+      - combobox [ref=e23]:
+        - option "iPhone" [selected]
+        - option "Android"
+        - option "iPad"
+        - option "自定义"
+    - generic [ref=e25]: "尺寸: 375 × 812"
+    - button "隐藏预览" [ref=e27] [cursor=pointer]
+  - generic [ref=e28]:
+    - generic [ref=e29]:
+      - generic [ref=e31]:
+        - heading "业务组件库" [level=2] [ref=e33]:
+          - img [ref=e34]
+          - text: 业务组件库
+        - generic [ref=e36]:
+          - button "📐布局" [ref=e37] [cursor=pointer]
+          - button "🧭导航" [ref=e38] [cursor=pointer]
+          - button "📄内容" [ref=e39] [cursor=pointer]
+          - button "📝表单" [ref=e40] [cursor=pointer]
+          - button "💬反馈" [ref=e41] [cursor=pointer]
+          - button "💼业务" [ref=e42] [cursor=pointer]
+        - generic [ref=e44]:
+          - generic [ref=e46]:
+            - generic [ref=e47]: ⚡
+            - generic [ref=e48]:
+              - generic [ref=e49]: 金刚区
+              - generic [ref=e50]: KingKongGrid
+              - generic [ref=e51]: 常用功能入口，支持自定义行列数
+            - img [ref=e52]
+          - generic [ref=e55]:
+            - generic [ref=e56]: 📦
+            - generic [ref=e57]:
+              - generic [ref=e58]: 卡片容器
+              - generic [ref=e59]: CardContainer
+              - generic [ref=e60]: 卡片容器，可放置其他组件
+            - img [ref=e61]
+          - generic [ref=e64]:
+            - generic [ref=e65]: ⬜
+            - generic [ref=e66]:
+              - generic [ref=e67]: 空白占位
+              - generic [ref=e68]: WhiteSpace
+              - generic [ref=e69]: 垂直空白占位
+            - img [ref=e70]
+          - generic [ref=e73]:
+            - generic [ref=e74]: ➖
+            - generic [ref=e75]:
+              - generic [ref=e76]: 分割线
+              - generic [ref=e77]: Divider
+              - generic [ref=e78]: 水平分割线
+            - img [ref=e79]
+        - generic [ref=e82]:
+          - img [ref=e83]
+          - generic [ref=e85]:
+            - paragraph [ref=e86]: 业务组件说明
+            - paragraph [ref=e87]: • 按业务场景分组，更符合开发习惯
+            - paragraph [ref=e88]: • 拖拽或点击组件添加到画布
+            - paragraph [ref=e89]: • 右侧预览实时更新
+      - generic [ref=e92]:
+        - img [ref=e93]
+        - paragraph [ref=e95]: 选择组件以编辑属性
+    - generic [ref=e96]:
+      - generic [ref=e97]:
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e101]: 9:41
+            - generic [ref=e102]:
+              - img [ref=e103]
+              - img [ref=e105]
+          - generic [ref=e109]:
+            - img [ref=e110]
+            - paragraph [ref=e112]: 拖拽组件到此处开始创建
+        - status [ref=e115]
+      - generic [ref=e116]:
+        - heading "实时预览" [level=3] [ref=e118]
+        - generic [ref=e120]:
+          - generic [ref=e121]:
+            - generic [ref=e122]: 9:41
+            - generic [ref=e123]:
+              - img [ref=e124]
+              - img [ref=e126]
+          - generic [ref=e130]:
+            - img [ref=e131]
+            - paragraph [ref=e133]: 拖拽组件到此处开始创建
+        - status [ref=e136]

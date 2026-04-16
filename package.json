@@ -1,0 +1,43 @@
+{
+  "name": "cotton-lowcode",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A modern low-code platform built with React, TypeScript, Vite and NestJS",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:editor": "pnpm --filter @cotton/editor dev",
+    "dev:backend": "pnpm --filter @cotton/backend dev",
+    "build": "pnpm -r build",
+    "build:editor": "pnpm --filter @cotton/editor build",
+    "build:backend": "pnpm --filter @cotton/backend build",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "clean": "pnpm -r clean && rm -rf node_modules"
+  },
+  "keywords": [
+    "low-code",
+    "no-code",
+    "react",
+    "typescript",
+    "vite",
+    "nestjs",
+    "monorepo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
