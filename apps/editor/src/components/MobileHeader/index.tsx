@@ -114,6 +114,7 @@ export default function MobileHeader() {
     loadTemplatesFromServer,
     createFromTemplate,
     deleteTemplateFromServer,
+    clonePageToServer,
     clearError,
     error,
   } = useEditorStore();
@@ -342,7 +343,8 @@ export default function MobileHeader() {
     createNewPage(values.name.trim() || '新页面');
     setNewPageModalOpen(false);
     msgApi.success('已创建新页面');
-    navigate('/editor');
+    const page = useEditorStore.getState().currentPage;
+    if (page) navigate(`/editor/${page.id}`);
   };
 
   const handlePreview = async () => {
@@ -401,7 +403,8 @@ export default function MobileHeader() {
     await createFromTemplate(templateId);
     setTemplateDrawerOpen(false);
     msgApi.success('已从模板创建新页面');
-    navigate('/editor');
+    const page = useEditorStore.getState().currentPage;
+    if (page) navigate(`/editor/${page.id}`);
   };
 
   const handleDeleteTemplate = async (id: string) => {
@@ -570,6 +573,17 @@ export default function MobileHeader() {
               onClick={() => openFlowHistory(`${record.name} · 流程历史`, record.flowHistory ?? [])}
             >
               历史
+            </Button>
+            <Button
+              size="small"
+              icon={<CopyOutlined />}
+              onClick={async () => {
+                await clonePageToServer(record.id);
+                msgApi.success('页面已复制');
+                await refreshPages();
+              }}
+            >
+              复制
             </Button>
             <Popconfirm
               title="删除页面"

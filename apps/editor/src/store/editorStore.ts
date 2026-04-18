@@ -73,6 +73,7 @@ interface EditorState {
   loadTemplatesFromServer: () => Promise<Template[]>;
   createFromTemplate: (templateId: string) => Promise<void>;
   deleteTemplateFromServer: (id: string) => Promise<void>;
+  clonePageToServer: (id: string, name?: string) => Promise<string>;
   clearError: () => void;
 }
 
@@ -796,6 +797,30 @@ export const useEditorStore = create<EditorState>((set, get) => ({
         isLoading: false,
         error: error instanceof Error ? error.message : '删除模板失败',
       });
+    }
+  },
+
+  clonePageToServer: async (id: string, name?: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await apiService.getPage(id);
+      const source = response.data;
+      const newName = name || `${source.name} (副本)`;
+      const cloneResponse = await apiService.createPage({
+        name: newName,
+        description: source.description,
+        content: source.content,
+        status: 'draft',
+        flowHistory: [],
+      });
+      set({ isLoading: false });
+      return cloneResponse.data.id;
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : '复制页面失败',
+      });
+      throw error;
     }
   },
 

@@ -4,6 +4,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 const Editor = lazy(() => import('./pages/Editor'));
 const PreviewPage = lazy(() => import('./pages/Editor/PreviewPage'));
+const HomePage = lazy(() => import('./pages/Home'));
 
 function App() {
   return (
@@ -20,9 +21,8 @@ function App() {
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Suspense fallback={<div className="p-8 text-center text-slate-500">加载中...</div>}>
           <Routes>
-            <Route path="/" element={<Editor />} />
-            <Route path="/editor/:pageId?" element={<Editor />} />
-            <Route path="/preview" element={<PreviewPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/editor/:pageId" element={<Editor />} />
             <Route path="/preview/:pageId" element={<PreviewPage />} />
           </Routes>
         </Suspense>
