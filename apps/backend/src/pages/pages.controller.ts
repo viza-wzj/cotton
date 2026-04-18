@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PagesService } from './pages.service';
-import { CreatePageDto, UpdatePageDto } from './dto/page.dto';
+import { CreatePageDto, PageListQueryDto, UpdatePageDto } from './dto/page.dto';
 
 @ApiTags('pages')
 @Controller('pages')
@@ -18,8 +18,8 @@ export class PagesController {
   @Get()
   @ApiOperation({ summary: '获取所有页面' })
   @ApiResponse({ status: 200, description: '获取页面列表成功' })
-  findAll() {
-    return this.pagesService.findAll();
+  findAll(@Query() query: PageListQueryDto) {
+    return this.pagesService.findAll(query);
   }
 
   @Get(':id')

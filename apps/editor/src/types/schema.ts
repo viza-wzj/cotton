@@ -1,6 +1,5 @@
 /**
  * 本地 Schema 类型定义
- * 避免从 @cotton/schema 导入时的解析问题
  */
 
 export interface PageSchema {
@@ -10,6 +9,8 @@ export interface PageSchema {
   name: string;
   /** 页面描述 */
   description?: string;
+  /** Schema 版本（用于数据迁移） */
+  schemaVersion: string;
   /** 版本号 */
   version: string;
   /** 页面组件树 */
@@ -24,9 +25,9 @@ export interface GlobalConfig {
   /** 主题配置 */
   theme?: ThemeConfig;
   /** 全局样式 */
-  styles?: Record<string, any>;
+  styles?: Record<string, unknown>;
   /** 全局变量 */
-  variables?: Record<string, any>;
+  variables?: Record<string, unknown>;
 }
 
 export interface ThemeConfig {
@@ -37,7 +38,7 @@ export interface ThemeConfig {
   /** 背景色 */
   backgroundColor?: string;
   /** 其他主题配置 */
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface PageMetadata {
@@ -53,21 +54,22 @@ export interface PageMetadata {
   tags?: string[];
 }
 
-export interface ComponentSchema {
+export interface BaseComponentSchema<
+  TType extends string = string,
+  TProps extends object = Record<string, unknown>,
+> {
   /** 组件唯一标识 */
   id: string;
   /** 组件类型 */
-  type: string;
+  type: TType;
   /** 组件名称 */
   name?: string;
   /** 组件属性 */
-  props: Record<string, any>;
+  props: TProps;
   /** 组件样式 */
   styles?: CSSProperties;
   /** 子组件 */
   children?: ComponentSchema[];
-  /** 事件处理器 */
-  events?: EventHandler[];
   /** 是否隐藏 */
   hidden?: boolean;
   /** 是否锁定 */
@@ -76,29 +78,129 @@ export interface ComponentSchema {
   condition?: string;
 }
 
+export type ComponentSchema = BaseComponentSchema;
+
 export interface CSSProperties {
   [key: string]: string | number | undefined;
 }
 
-export interface EventHandler {
-  /** 事件名称 */
-  name: string;
-  /** 事件处理动作 */
-  actions: EventAction[];
+
+// 业务组件类型定义
+export interface KingKongItem {
+  id: string;
+  icon: string;
+  label: string;
+  color?: string;
+  url?: string;
+  disabled?: boolean;
 }
 
-export interface EventAction {
-  /** 动作类型 */
-  type: 'navigation' | 'api' | 'state' | 'custom' | 'message';
-  /** 动作配置 */
-  config: Record<string, any>;
+export interface KingKongGridProps {
+  columns: number;
+  rows: number;
+  gap: number;
+  backgroundColor: string;
+  borderRadius: number;
+  padding: number;
+  itemSize: number;
+  iconSize?: number;
+  textSize?: number;
+  items: KingKongItem[];
 }
 
-// 常量定义
-export const COMPONENT_CATEGORIES = {
-  BASIC: 'basic',
-  FORM: 'form',
-  DATA: 'data',
-  LAYOUT: 'layout',
-  ADVANCED: 'advanced',
-} as const;
+export interface CustomNavBarProps {
+  title: string;
+  leftContent?: unknown;
+  rightContent?: unknown;
+  backgroundColor: string;
+  textColor: string;
+  height: number;
+  showBack: boolean;
+}
+
+export interface SearchBarProps {
+  placeholder: string;
+  backgroundColor: string;
+  borderRadius: number;
+  height: number;
+}
+
+export interface CardContainerProps {
+  title: string;
+  showHeader: boolean;
+  backgroundColor: string;
+  borderRadius: number;
+  padding: number;
+  shadow: boolean;
+}
+
+export interface BannerCarouselProps {
+  height: number;
+  autoplay?: number;
+  indicator: boolean;
+  images: string[];
+}
+
+export interface ButtonGroupItem {
+  text: string;
+  type?: 'primary' | 'default' | 'warning' | 'danger';
+}
+
+export interface ButtonGroupProps {
+  buttons: ButtonGroupItem[];
+  direction: 'row' | 'column';
+  gap: number;
+}
+
+export interface ListItemProps {
+  title: string;
+  description: string;
+  leftIcon: string;
+  rightArrow: boolean;
+  showDivider: boolean;
+}
+
+export interface CustomLabelProps {
+  text: string;
+  type: 'default' | 'primary' | 'success' | 'warning' | 'danger';
+  size: 'large' | 'medium' | 'small';
+  closable: boolean;
+}
+
+export interface WhiteSpaceProps {
+  height: number;
+}
+
+export interface DividerProps {
+  height: number;
+  color: string;
+  dashed: boolean;
+  textPosition?: 'left' | 'center' | 'right';
+  text: string;
+}
+
+export type BusinessComponentType =
+  | 'KingKongGrid'
+  | 'CustomNavBar'
+  | 'SearchBar'
+  | 'CardContainer'
+  | 'BannerCarousel'
+  | 'ButtonGroup'
+  | 'ListItem'
+  | 'CustomLabel'
+  | 'WhiteSpace'
+  | 'Divider';
+
+export interface BusinessComponentPropsMap {
+  KingKongGrid: KingKongGridProps;
+  CustomNavBar: CustomNavBarProps;
+  SearchBar: SearchBarProps;
+  CardContainer: CardContainerProps;
+  BannerCarousel: BannerCarouselProps;
+  ButtonGroup: ButtonGroupProps;
+  ListItem: ListItemProps;
+  CustomLabel: CustomLabelProps;
+  WhiteSpace: WhiteSpaceProps;
+  Divider: DividerProps;
+}
+

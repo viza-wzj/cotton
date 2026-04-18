@@ -30,10 +30,6 @@
       "@/store/*": ["./src/store/*"],
       "@/pages/*": ["./src/pages/*"],
       "@/types/*": ["./src/types/*"],
-      "@cotton/components": ["../../packages/components/src"],
-      "@cotton/schema": ["../../packages/schema/src"],
-      "@cotton/shared": ["../../packages/shared/src"],
-      "@cotton/ui": ["../../packages/ui/src"]
     }
   },
   "include": ["src"],

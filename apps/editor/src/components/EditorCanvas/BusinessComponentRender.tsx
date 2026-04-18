@@ -1,10 +1,26 @@
-import { ComponentSchema } from '@/types/schema';
+import type {
+  BannerCarouselProps,
+  ButtonGroupItem,
+  ButtonGroupProps,
+  CardContainerProps,
+  ComponentSchema,
+  CustomLabelProps,
+  CustomNavBarProps,
+  DividerProps,
+  KingKongGridProps,
+  KingKongItem,
+  ListItemProps,
+  SearchBarProps,
+  WhiteSpaceProps,
+} from '@/types/schema';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface BusinessComponentRenderProps {
   component: ComponentSchema;
   isSelected: boolean;
   onClick: (e: React.MouseEvent, id: string) => void;
   isPreview: boolean;
+  onDropToContainer?: (parentId: string, e: React.DragEvent) => void;
 }
 
 export default function BusinessComponentRender({
@@ -12,6 +28,7 @@ export default function BusinessComponentRender({
   isSelected,
   onClick,
   isPreview,
+  onDropToContainer,
 }: BusinessComponentRenderProps) {
   const renderComponent = () => {
     switch (component.type) {
@@ -58,6 +75,7 @@ export default function BusinessComponentRender({
 
   // 金刚区渲染器
   const renderKingKongGrid = (comp: ComponentSchema) => {
+    const props = comp.props as Partial<KingKongGridProps>;
     const {
       columns = 4,
       rows = 2,
@@ -69,10 +87,10 @@ export default function BusinessComponentRender({
       iconSize = 28,
       textSize = 12,
       items = [],
-    } = comp.props;
+    } = props;
 
     // 默认示例数据
-    const defaultItems = [
+    const defaultItems: KingKongItem[] = [
       { id: '1', icon: '🏠', label: '首页', color: '#1296db' },
       { id: '2', icon: '🔍', label: '搜索', color: '#1296db' },
       { id: '3', icon: '📋', label: '订单', color: '#ff6b6b' },
@@ -98,7 +116,7 @@ export default function BusinessComponentRender({
             gap: gap,
           }}
         >
-          {gridItems.slice(0, rows * columns).map((item: any, index: number) => (
+          {gridItems.slice(0, rows * columns).map((item: KingKongItem, index: number) => (
             <div
               key={item.id || index}
               className="kingkong-item"
@@ -160,6 +178,7 @@ export default function BusinessComponentRender({
 
   // 自定义导航栏
   const renderCustomNavBar = (comp: ComponentSchema) => {
+    const props = comp.props as Partial<CustomNavBarProps>;
     const {
       title = '标题',
       leftContent = null,
@@ -168,7 +187,9 @@ export default function BusinessComponentRender({
       textColor = '#fff',
       height = 44,
       showBack = false,
-    } = comp.props;
+    } = props;
+    const navLeftContent = leftContent as React.ReactNode;
+    const navRightContent = rightContent as React.ReactNode;
 
     return (
       <div
@@ -190,7 +211,7 @@ export default function BusinessComponentRender({
           {showBack && (
             <span style={{ cursor: 'pointer' }}>←</span>
           )}
-          {leftContent}
+          {navLeftContent}
         </div>
 
         {/* 标题 */}
@@ -208,7 +229,7 @@ export default function BusinessComponentRender({
 
         {/* 右侧内容 */}
         <div className="navbar-right" style={{ flex: 1, textAlign: 'right' }}>
-          {rightContent}
+          {navRightContent}
         </div>
       </div>
     );
@@ -216,12 +237,13 @@ export default function BusinessComponentRender({
 
   // 搜索框
   const renderSearchBar = (comp: ComponentSchema) => {
+    const props = comp.props as Partial<SearchBarProps>;
     const {
       placeholder = '搜索',
       backgroundColor = '#f5f5f5',
       borderRadius = 20,
       height = 40,
-    } = comp.props;
+    } = props;
 
     return (
       <div className="search-bar" style={{ padding: '12px 16px' }}>
@@ -258,6 +280,7 @@ export default function BusinessComponentRender({
     preview: boolean,
     clickHandler: (e: React.MouseEvent, id: string) => void
   ) => {
+    const props = comp.props as Partial<CardContainerProps>;
     const {
       title = '卡片标题',
       showHeader = true,
@@ -265,7 +288,23 @@ export default function BusinessComponentRender({
       borderRadius = 8,
       padding = 12,
       shadow = true,
-    } = comp.props;
+    } = props;
+
+    const hasChildren = comp.children && comp.children.length > 0;
+    const isDropTarget = !preview && onDropToContainer;
+
+    const handleDragOver = (e: React.DragEvent) => {
+      if (!isDropTarget) return;
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+      if (!isDropTarget) return;
+      e.preventDefault();
+      e.stopPropagation();
+      onDropToContainer(comp.id, e);
+    };
 
     return (
       <div
@@ -293,16 +332,35 @@ export default function BusinessComponentRender({
             {title}
           </div>
         )}
-        <div className="card-body">
-          {comp.children?.map((child) => (
-            <BusinessComponentRender
-              key={child.id}
-              component={child}
-              isSelected={false}
-              onClick={clickHandler}
-              isPreview={preview}
-            />
-          ))}
+        <div
+          className="card-body"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          style={{
+            minHeight: hasChildren ? undefined : 40,
+            border: !preview && !hasChildren ? '2px dashed #d1d5db' : 'none',
+            borderRadius: 4,
+            display: 'flex',
+            alignItems: hasChildren ? undefined : 'center',
+            justifyContent: hasChildren ? undefined : 'center',
+          }}
+        >
+          {hasChildren ? (
+            comp.children!.map((child) => (
+              <BusinessComponentRender
+                key={child.id}
+                component={child}
+                isSelected={false}
+                onClick={clickHandler}
+                isPreview={preview}
+                onDropToContainer={onDropToContainer}
+              />
+            ))
+          ) : (
+            !preview && (
+              <span className="text-xs text-gray-400">拖拽组件到此处</span>
+            )
+          )}
         </div>
       </div>
     );
@@ -310,11 +368,12 @@ export default function BusinessComponentRender({
 
   // Banner 轮播
   const renderBannerCarousel = (comp: ComponentSchema) => {
+    const props = comp.props as Partial<BannerCarouselProps>;
     const {
       height = 160,
       indicator = true,
       images = [],
-    } = comp.props;
+    } = props;
 
     const defaultImages = [
       'https://via.placeholder.com/750x320/1989fa/ffffff?text=Banner+1',
@@ -390,6 +449,7 @@ export default function BusinessComponentRender({
 
   // 按钮组
   const renderButtonGroup = (comp: ComponentSchema) => {
+    const props = comp.props as Partial<ButtonGroupProps>;
     const {
       buttons = [
         { text: '主要按钮', type: 'primary' },
@@ -397,7 +457,7 @@ export default function BusinessComponentRender({
       ],
       direction = 'row',
       gap = 10,
-    } = comp.props;
+    } = props;
 
     const getButtonStyle = (type: string) => {
       const styles = {
@@ -419,7 +479,7 @@ export default function BusinessComponentRender({
           gap,
         }}
       >
-        {buttons.map((btn: any, index: number) => (
+        {buttons.map((btn: ButtonGroupItem, index: number) => (
           <button
             key={index}
             style={{
@@ -441,13 +501,14 @@ export default function BusinessComponentRender({
 
   // 列表项
   const renderListItem = (comp: ComponentSchema) => {
+    const props = comp.props as Partial<ListItemProps>;
     const {
       title = '标题',
       description = '描述信息',
       leftIcon = '',
       rightArrow = true,
       showDivider = true,
-    } = comp.props;
+    } = props;
 
     return (
       <div
@@ -479,12 +540,13 @@ export default function BusinessComponentRender({
 
   // 标签
   const renderCustomLabel = (comp: ComponentSchema) => {
+    const props = comp.props as Partial<CustomLabelProps>;
     const {
       text = '标签',
       type = 'default',
       size = 'medium',
       closable = false,
-    } = comp.props;
+    } = props;
 
     const getTypeStyle = () => {
       const styles = {
@@ -536,18 +598,20 @@ export default function BusinessComponentRender({
 
   // 空白占位
   const renderWhiteSpace = (comp: ComponentSchema) => {
-    const { height = 10 } = comp.props;
+    const props = comp.props as Partial<WhiteSpaceProps>;
+    const { height = 10 } = props;
     return <div style={{ height }} />;
   };
 
   // 分割线
   const renderDivider = (comp: ComponentSchema) => {
+    const props = comp.props as Partial<DividerProps>;
     const {
       height = 1,
       color = '#e5e5e5',
       dashed = false,
       text = '',
-    } = comp.props;
+    } = props;
 
     return (
       <div
@@ -590,18 +654,20 @@ export default function BusinessComponentRender({
   };
 
   return (
-    <div
-      className={`${isSelected && !isPreview ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
-      data-component-id={component.id}
-      style={{
-        border: !isPreview ? '1px dashed #cbd5e1' : 'none',
-        margin: !isPreview ? '4px' : '0',
-        padding: !isPreview ? '4px' : '0',
-        backgroundColor: isPreview ? 'transparent' : '#fafafa',
-        borderRadius: '4px',
-      }}
-    >
-      {renderComponent()}
-    </div>
+    <ErrorBoundary>
+      <div
+        className={`${isSelected && !isPreview ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
+        data-component-id={component.id}
+        style={{
+          border: !isPreview ? '1px dashed #cbd5e1' : 'none',
+          margin: !isPreview ? '4px' : '0',
+          padding: !isPreview ? '4px' : '0',
+          backgroundColor: isPreview ? 'transparent' : '#fafafa',
+          borderRadius: '4px',
+        }}
+      >
+        {renderComponent()}
+      </div>
+    </ErrorBoundary>
   );
 }

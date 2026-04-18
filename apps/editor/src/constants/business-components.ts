@@ -3,14 +3,21 @@
  * 按业务场景分类
  */
 
-export interface BusinessComponentMeta {
-  type: string;
+import type {
+  BusinessComponentPropsMap,
+  BusinessComponentType,
+} from '@/types/schema';
+
+export interface BusinessComponentMeta<
+  T extends BusinessComponentType = BusinessComponentType,
+> {
+  type: T;
   displayName: string;
   category: string;
   subCategory?: string;
   icon: string;
   description?: string;
-  defaultProps: Record<string, any>;
+  defaultProps: BusinessComponentPropsMap[T];
   configSchema?: PropConfig[];
   acceptChildren?: boolean;
 }
@@ -19,9 +26,9 @@ export interface PropConfig {
   name: string;
   label: string;
   type: 'string' | 'number' | 'boolean' | 'color' | 'select' | 'image' | 'slider' | 'input';
-  defaultValue?: any;
+  defaultValue?: unknown;
   required?: boolean;
-  options?: Array<{ label: string; value: any }>;
+  options?: Array<{ label: string; value: unknown }>;
   min?: number;
   max?: number;
   step?: number;
@@ -205,6 +212,13 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
       height: 44,
       showBack: false,
     },
+    configSchema: [
+      { group: '基础配置', name: 'title', label: '标题', type: 'input' },
+      { group: '基础配置', name: 'showBack', label: '显示返回', type: 'boolean' },
+      { group: '样式配置', name: 'backgroundColor', label: '背景颜色', type: 'color' },
+      { group: '样式配置', name: 'textColor', label: '文字颜色', type: 'color' },
+      { group: '样式配置', name: 'height', label: '高度', type: 'slider', min: 30, max: 60, step: 2 },
+    ],
   },
 
   // 搜索框组件
@@ -221,6 +235,12 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
       borderRadius: 20,
       height: 40,
     },
+    configSchema: [
+      { group: '基础配置', name: 'placeholder', label: '占位文字', type: 'input' },
+      { group: '样式配置', name: 'backgroundColor', label: '背景颜色', type: 'color' },
+      { group: '样式配置', name: 'borderRadius', label: '圆角', type: 'slider', min: 0, max: 30, step: 1 },
+      { group: '样式配置', name: 'height', label: '高度', type: 'slider', min: 30, max: 60, step: 2 },
+    ],
   },
 
   // 卡片容器组件
@@ -240,6 +260,14 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
       padding: 12,
       shadow: true,
     },
+    configSchema: [
+      { group: '基础配置', name: 'title', label: '标题', type: 'input' },
+      { group: '基础配置', name: 'showHeader', label: '显示标题栏', type: 'boolean' },
+      { group: '基础配置', name: 'shadow', label: '显示阴影', type: 'boolean' },
+      { group: '样式配置', name: 'backgroundColor', label: '背景颜色', type: 'color' },
+      { group: '样式配置', name: 'borderRadius', label: '圆角', type: 'slider', min: 0, max: 20, step: 1 },
+      { group: '样式配置', name: 'padding', label: '内边距', type: 'slider', min: 0, max: 30, step: 2 },
+    ],
   },
 
   // Banner 轮播组件
@@ -259,6 +287,11 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
         'https://via.placeholder.com/750x320',
       ],
     },
+    configSchema: [
+      { group: '基础配置', name: 'indicator', label: '显示指示器', type: 'boolean' },
+      { group: '样式配置', name: 'height', label: '高度', type: 'slider', min: 100, max: 300, step: 10 },
+      { group: '样式配置', name: 'autoplay', label: '自动播放间隔(ms)', type: 'slider', min: 0, max: 10000, step: 500 },
+    ],
   },
 
   // 按钮组组件
@@ -277,6 +310,13 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
       direction: 'row',
       gap: 10,
     },
+    configSchema: [
+      {
+        group: '基础配置', name: 'direction', label: '排列方向', type: 'select',
+        options: [{ label: '水平', value: 'row' }, { label: '垂直', value: 'column' }],
+      },
+      { group: '样式配置', name: 'gap', label: '间距', type: 'slider', min: 0, max: 30, step: 2 },
+    ],
   },
 
   // 列表项组件
@@ -294,6 +334,13 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
       rightArrow: true,
       showDivider: true,
     },
+    configSchema: [
+      { group: '基础配置', name: 'title', label: '标题', type: 'input' },
+      { group: '基础配置', name: 'description', label: '描述', type: 'input' },
+      { group: '基础配置', name: 'leftIcon', label: '左侧图标', type: 'input' },
+      { group: '基础配置', name: 'rightArrow', label: '显示右箭头', type: 'boolean' },
+      { group: '基础配置', name: 'showDivider', label: '显示分割线', type: 'boolean' },
+    ],
   },
 
   // 标签组件
@@ -310,6 +357,28 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
       size: 'medium',
       closable: false,
     },
+    configSchema: [
+      { group: '基础配置', name: 'text', label: '文本', type: 'input' },
+      {
+        group: '基础配置', name: 'type', label: '类型', type: 'select',
+        options: [
+          { label: '默认', value: 'default' },
+          { label: '主要', value: 'primary' },
+          { label: '成功', value: 'success' },
+          { label: '警告', value: 'warning' },
+          { label: '危险', value: 'danger' },
+        ],
+      },
+      {
+        group: '基础配置', name: 'size', label: '大小', type: 'select',
+        options: [
+          { label: '大', value: 'large' },
+          { label: '中', value: 'medium' },
+          { label: '小', value: 'small' },
+        ],
+      },
+      { group: '基础配置', name: 'closable', label: '可关闭', type: 'boolean' },
+    ],
   },
 
   // 空白占位组件
@@ -323,6 +392,9 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
     defaultProps: {
       height: 10,
     },
+    configSchema: [
+      { name: 'height', label: '高度', type: 'slider', min: 0, max: 100, step: 5 },
+    ],
   },
 
   // 分割线组件
@@ -340,6 +412,20 @@ export const BUSINESS_COMPONENTS: BusinessComponentMeta[] = [
       textPosition: 'center',
       text: '',
     },
+    configSchema: [
+      { group: '基础配置', name: 'text', label: '文本', type: 'input' },
+      {
+        group: '基础配置', name: 'textPosition', label: '文本位置', type: 'select',
+        options: [
+          { label: '左', value: 'left' },
+          { label: '居中', value: 'center' },
+          { label: '右', value: 'right' },
+        ],
+      },
+      { group: '基础配置', name: 'dashed', label: '虚线', type: 'boolean' },
+      { group: '样式配置', name: 'height', label: '线条粗细', type: 'slider', min: 1, max: 10, step: 1 },
+      { group: '样式配置', name: 'color', label: '颜色', type: 'color' },
+    ],
   },
 ];
 
@@ -382,27 +468,3 @@ export const BUSINESS_GROUPS = [
     components: BUSINESS_COMPONENTS.filter(c => c.category === BUSINESS_CATEGORIES.BUSINESS),
   },
 ];
-
-// 金刚区项目类型
-export interface KingKongItem {
-  id: string;
-  icon: string;
-  label: string;
-  color?: string;
-  url?: string;
-  disabled?: boolean;
-}
-
-// 金刚区组件配置
-export interface KingKongGridConfig {
-  columns: number;
-  rows: number;
-  gap: number;
-  backgroundColor: string;
-  borderRadius: number;
-  padding: number;
-  itemSize: number;
-  iconSize: number;
-  textSize: number;
-  items: KingKongItem[];
-}

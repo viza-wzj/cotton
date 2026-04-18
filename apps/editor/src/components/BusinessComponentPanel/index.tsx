@@ -1,32 +1,40 @@
 import { useState } from 'react';
 import { useEditorStore } from '@/store/editorStore';
 import { generateComponentId } from '@/constants';
-import { BUSINESS_GROUPS, BUSINESS_CATEGORIES } from '@/constants/business-components';
+import {
+  BUSINESS_GROUPS,
+  BUSINESS_CATEGORIES,
+  type BusinessComponentMeta,
+} from '@/constants/business-components';
+import type { ComponentSchema } from '@/types/schema';
 
 export default function BusinessComponentPanel() {
   const { addComponent, setDraggingComponent } = useEditorStore();
   const [activeTab, setActiveTab] = useState<string>(BUSINESS_CATEGORIES.LAYOUT);
 
-  const handleDragStart = (component: typeof BUSINESS_GROUPS[number]['components'][number]) => {
-    setDraggingComponent({
-      id: generateComponentId(component.type),
-      type: component.type,
-      props: component.defaultProps,
-      children: component.acceptChildren ? [] : undefined,
-    } as any);
+  const createComponentSchema = (
+    component: BusinessComponentMeta
+  ): ComponentSchema => ({
+    id: generateComponentId(component.type),
+    type: component.type,
+    props: { ...component.defaultProps },
+    children: component.acceptChildren ? [] : undefined,
+  });
+
+  const handleDragStart = (
+    component: typeof BUSINESS_GROUPS[number]['components'][number]
+  ) => {
+    setDraggingComponent(createComponentSchema(component));
   };
 
   const handleDragEnd = () => {
     setDraggingComponent(null);
   };
 
-  const handleClick = (component: typeof BUSINESS_GROUPS[number]['components'][number]) => {
-    addComponent({
-      id: generateComponentId(component.type),
-      type: component.type,
-      props: component.defaultProps,
-      children: component.acceptChildren ? [] : undefined,
-    } as any);
+  const handleClick = (
+    component: typeof BUSINESS_GROUPS[number]['components'][number]
+  ) => {
+    addComponent(createComponentSchema(component));
   };
 
   return (

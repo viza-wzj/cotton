@@ -16,7 +16,9 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+
+import { BUSINESS_COMPONENTS } from '@/constants';
 
 interface EditorCanvasProps {
   deviceType: string;
@@ -43,6 +45,17 @@ export default function EditorCanvas({
     setActiveId,
   } = useEditorStore();
   const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null);
+
+  const activeComponent = useMemo(() => {
+    if (!activeId || !currentPage) return null;
+    return currentPage.components.find((c) => c.id === activeId) ?? null;
+  }, [activeId, currentPage]);
+
+  const activeComponentName = useMemo(() => {
+    if (!activeComponent) return '';
+    const meta = BUSINESS_COMPONENTS.find((b) => b.type === activeComponent.type);
+    return meta?.displayName ?? activeComponent.type;
+  }, [activeComponent]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -74,6 +87,13 @@ export default function EditorCanvas({
     }
   };
 
+  const handleDropToContainer = (parentId: string, _e: React.DragEvent) => {
+    if (isPreview) return;
+    if (draggingComponent) {
+      addComponent(draggingComponent, parentId);
+    }
+  };
+
   const handleDragStart = (event: DragEndEvent) => {
     setActiveId(event.active.id as string);
   };
@@ -101,8 +121,7 @@ export default function EditorCanvas({
     selectComponent(id);
   };
 
-  // 设备边框样式
-  const getDeviceStyle = () => {
+  const deviceStyle = useMemo(() => {
     const baseStyle = {
       width: canvasSize.width,
       minHeight: canvasSize.height,
@@ -127,7 +146,7 @@ export default function EditorCanvas({
     }
 
     return baseStyle;
-  };
+  }, [deviceType, canvasSize]);
 
   return (
     <DndContext
@@ -145,7 +164,7 @@ export default function EditorCanvas({
         {/* 移动设备框架 */}
         <div
           className="mx-auto bg-white overflow-hidden relative"
-          style={getDeviceStyle()}
+          style={deviceStyle}
         >
           {/* 状态栏 (仅 iPhone) */}
           {deviceType === 'IPHONE' && (
@@ -203,6 +222,7 @@ export default function EditorCanvas({
                         isSelected={comp.id === selectedComponentId}
                         onClick={handleComponentClick}
                         isPreview={isPreview}
+                        onDropToContainer={handleDropToContainer}
                       />
                     </DraggableComponent>
                   ))}
@@ -231,9 +251,9 @@ export default function EditorCanvas({
       </div>
 
       <DragOverlay>
-        {activeId && draggingComponent ? (
+        {activeComponent ? (
           <div className="bg-blue-500 text-white rounded-full px-3 py-1 text-sm shadow-lg opacity-80">
-            {draggingComponent.type}
+            {activeComponentName}
           </div>
         ) : null}
       </DragOverlay>

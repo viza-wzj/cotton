@@ -1,11 +1,7 @@
-import { IsString, IsOptional, IsBoolean, IsArray } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsArray, IsObject } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTemplateDto {
-  @ApiProperty({ description: '模板 ID' })
-  @IsString()
-  id: string;
-
   @ApiProperty({ description: '模板名称' })
   @IsString()
   name: string;
@@ -21,6 +17,7 @@ export class CreateTemplateDto {
   category?: string;
 
   @ApiProperty({ description: '模板内容' })
+  @IsObject()
   content: any;
 
   @ApiProperty({ description: '缩略图', required: false })
@@ -58,6 +55,7 @@ export class UpdateTemplateDto {
 
   @ApiProperty({ description: '模板内容', required: false })
   @IsOptional()
+  @IsObject()
   content?: any;
 
   @ApiProperty({ description: '缩略图', required: false })

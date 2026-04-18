@@ -1,18 +1,32 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateTemplateDto, UpdateTemplateDto } from './dto/template.dto';
+import { normalizeSchemaContent } from '../common/schema-version';
 
 @Injectable()
 export class TemplatesService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  create(createTemplateDto: CreateTemplateDto) {
-    this.databaseService.createTemplate(createTemplateDto);
-    return { success: true, data: { id: createTemplateDto.id } };
+  async create(createTemplateDto: CreateTemplateDto) {
+    const id = this.generateTemplateId();
+    const existing = this.databaseService.getTemplate(id);
+    if (existing) {
+      throw new ConflictException(`Template ${id} already exists`);
+    }
+
+    await this.databaseService.createTemplate({
+      id,
+      ...createTemplateDto,
+      content: normalizeSchemaContent(createTemplateDto.content),
+    });
+    return { success: true, data: { id } };
   }
 
   findAll() {
-    const templates = this.databaseService.listTemplates();
+    const templates = this.databaseService.listTemplates().map((template) => ({
+      ...template,
+      content: normalizeSchemaContent(template.content),
+    }));
     return { success: true, data: templates };
   }
 
@@ -21,28 +35,40 @@ export class TemplatesService {
     if (!template) {
       throw new NotFoundException(`Template ${id} not found`);
     }
-    return { success: true, data: template };
+    return {
+      success: true,
+      data: {
+        ...template,
+        content: normalizeSchemaContent(template.content),
+      },
+    };
   }
 
-  update(id: string, updateTemplateDto: UpdateTemplateDto) {
+  async update(id: string, updateTemplateDto: UpdateTemplateDto) {
     const existing = this.databaseService.getTemplate(id);
     if (!existing) {
       throw new NotFoundException(`Template ${id} not found`);
     }
-    // 先获取现有模板
-    const template = this.databaseService.getTemplate(id);
-    // 合并更新
-    const updated = { ...template, ...updateTemplateDto };
-    this.databaseService.createTemplate(updated);
+
+    await this.databaseService.updateTemplate(id, {
+      ...updateTemplateDto,
+      ...(updateTemplateDto.content !== undefined
+        ? { content: normalizeSchemaContent(updateTemplateDto.content) }
+        : {}),
+    });
     return { success: true, data: { id } };
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     const existing = this.databaseService.getTemplate(id);
     if (!existing) {
       throw new NotFoundException(`Template ${id} not found`);
     }
-    this.databaseService.deleteTemplate(id);
+    await this.databaseService.deleteTemplate(id);
     return { success: true, data: { id } };
+  }
+
+  private generateTemplateId(): string {
+    return `template_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
   }
 }
