@@ -1,0 +1,44 @@
+# ---- Build Stage ----
+FROM node:18-alpine AS builder
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# 先复制依赖相关文件，利用 Docker 缓存
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
+COPY apps/backend/package.json ./apps/backend/
+
+RUN pnpm install --frozen-lockfile
+
+# 复制源码并构建
+COPY tsconfig.base.json ./
+COPY apps/backend/ ./apps/backend/
+
+RUN pnpm --filter @cotton/backend build
+
+# ---- Production Stage ----
+FROM node:18-alpine
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
+COPY apps/backend/package.json ./apps/backend/
+
+RUN pnpm install --frozen-lockfile --prod
+
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+
+# 创建数据目录
+RUN mkdir -p /app/apps/backend/data
+
+WORKDIR /app/apps/backend
+
+ENV NODE_ENV=production
+ENV PORT=3001
+
+EXPOSE 3001
+
+CMD ["node", "dist/main.js"]

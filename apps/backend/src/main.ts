@@ -40,7 +40,8 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const port = Number(process.env.PORT || 3001);
-  await app.listen(port);
+  const host = process.env.HOST || '0.0.0.0';
+  await app.listen(port, host);
 
   console.log(`🚀 Backend server running on http://localhost:${port}`);
   console.log(`📚 API documentation: http://localhost:${port}/api/docs`);

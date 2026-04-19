@@ -154,7 +154,9 @@ export default function HomePage() {
       <div className="min-h-screen bg-slate-50">
         <div className="mx-auto max-w-6xl px-6 py-8">
           <div className="mb-8">
-            <Title level={3} className="!mb-1">Cotton 低代码平台</Title>
+            <Title level={3} className="!mb-1">
+              Cotton
+            </Title>
             <Text type="secondary">移动端页面可视化搭建</Text>
           </div>
 
@@ -194,9 +196,7 @@ export default function HomePage() {
             <Card>
               <Empty
                 description={
-                  keyword || filterStatus !== 'all'
-                    ? '没有找到匹配的页面'
-                    : '还没有页面'
+                  keyword || filterStatus !== 'all' ? '没有找到匹配的页面' : '还没有页面'
                 }
               >
                 {!keyword && filterStatus === 'all' && (
@@ -285,11 +285,7 @@ export default function HomePage() {
                             ],
                           }}
                         >
-                          <Button
-                            type="text"
-                            size="small"
-                            onClick={(e) => e.stopPropagation()}
-                          >
+                          <Button type="text" size="small" onClick={(e) => e.stopPropagation()}>
                             ...
                           </Button>
                         </Dropdown>
@@ -325,17 +321,17 @@ export default function HomePage() {
             <div className="mt-10">
               <div className="mb-4 flex items-center gap-2">
                 <AppstoreOutlined className="text-slate-400" />
-                <Title level={5} className="!mb-0">从模板创建</Title>
+                <Title level={5} className="!mb-0">
+                  从模板创建
+                </Title>
               </div>
               <Row gutter={[16, 16]}>
                 {templates.map((tpl) => (
                   <Col key={tpl.id} xs={24} sm={12} md={8} lg={6}>
-                    <Card
-                      hoverable
-                      size="small"
-                      onClick={() => handleCreateFromTemplate(tpl.id)}
-                    >
-                      <Text strong className="text-sm">{tpl.name}</Text>
+                    <Card hoverable size="small" onClick={() => handleCreateFromTemplate(tpl.id)}>
+                      <Text strong className="text-sm">
+                        {tpl.name}
+                      </Text>
                       {tpl.description && (
                         <Paragraph
                           type="secondary"
@@ -345,9 +341,7 @@ export default function HomePage() {
                           {tpl.description}
                         </Paragraph>
                       )}
-                      {tpl.category && (
-                        <Tag className="!mt-2 !text-xs">{tpl.category}</Tag>
-                      )}
+                      {tpl.category && <Tag className="!mt-2 !text-xs">{tpl.category}</Tag>}
                     </Card>
                   </Col>
                 ))}

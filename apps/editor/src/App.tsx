@@ -18,7 +18,7 @@ function App() {
         </div>
       }
     >
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <BrowserRouter basename="/cotton" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Suspense fallback={<div className="p-8 text-center text-slate-500">加载中...</div>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
