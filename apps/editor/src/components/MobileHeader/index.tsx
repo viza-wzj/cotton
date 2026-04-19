@@ -609,7 +609,7 @@ export default function MobileHeader() {
             <Badge status={currentPageStatus === 'published' ? 'success' : 'default'} />
             <div>
               <Title level={5} className="!mb-0">
-                Cotton 编辑器
+                Cotton lowcode编辑器
               </Title>
               <Space size={8}>
                 <Text strong>{currentPage?.name || '未命名页面'}</Text>
@@ -918,7 +918,11 @@ export default function MobileHeader() {
               width: 200,
               render: (_: unknown, record: Template) => (
                 <Space>
-                  <Button size="small" type="primary" onClick={() => handleCreateFromTemplate(record.id)}>
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={() => handleCreateFromTemplate(record.id)}
+                  >
                     创建页面
                   </Button>
                   <Popconfirm
